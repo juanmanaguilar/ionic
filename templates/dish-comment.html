@@ -1,0 +1,44 @@
+
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Add comment</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeFormComment()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+      <!-- <div class="modal-body" ng-controller="DishCommentController"> -->
+    <form class="form-horizontal" name="commentForm" ng-submit="submitComment()" novalidate>
+        <div class="list">
+        <div class="form-group" ng-class="{ 'has-error' : commentForm.name.$error.required && !commentForm.name.$pristine }">
+          
+            <label class="item item-input">
+              <span class="input-label">Your name</span>
+              <input type="text" ng-model="mycomment.author" class="form-control" id="name" placeholder="Enter Your Name" required>
+                <span ng-show="commentForm.name.$error.required && !commentForm.name.$pristine" class="help-block">Your name is required.</span>
+            </label>
+        <div class="form-group" ng-class="commentForm.rating">
+            <label class="item item-input item-select">
+              <span class="input-label">Number of Starts</span>
+                <select ng-model="mycomment.rating" value="1" name="rating">
+                    <option ng-repeat="n in [1,2,3,4,5]" value="{{n}}">{{n}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error' : commentForm.comment.$error.required && !commentForm.comment.$pristine }">
+            <label class="item item-input">
+              <span class="input-label">Your comment</span>
+              <input type="textarea" ng-model="mycomment.comment" class="form-control" id="comment" placeholder="Enter Your Comment" required>
+            </label>
+            <span ng-show="commentForm.comment.$error.required && !commentForm.comment.$pristine" class="help-block">Your comment is required.</span>
+        </div>
+        <div class="form-group">                    
+            <label class="item">
+              <button class="button button-block button-positive" type="submit" ng-disabled="commentForm.$invalid">Submit comment</button>
+            </label>
+        </div>
+      </div>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
