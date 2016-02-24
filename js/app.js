@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('conFusion', ['ionic', 'conFusion.controllers', 'conFusion.services'])
 
-.run(function($ionicPlatform, $rootScope, $ioinicLoading) {
+.run(function($ionicPlatform, $rootScope, $ionicLoading) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
