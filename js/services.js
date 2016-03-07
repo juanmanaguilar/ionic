@@ -39,6 +39,7 @@ angular.module('conFusion.services', ['ngResource'])
     
     
             return $resource(baseURL+"leadership/:id");
+            
     
         }])
 
@@ -49,31 +50,40 @@ angular.module('conFusion.services', ['ngResource'])
     
         }])
 
-        .factory('favoriteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+        .factory('favoriteFactory', ['$resource', 'baseURL', '$localStorage', function ($resource, baseURL, $localStorage) {
+ //           var favorites = $localStorage.getObject('favorites','{}');
+
+//            var favorites = $localStorage.get('favorites',[]);
+            var favArr = $localStorage.get('favorites',[]);
+//        .factory('favoriteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
             var favFac = {};
-            var favorites = [];
+//            var favorites = [];
 
             favFac.addToFavorites = function (index) {
-                for (var i = 0; i < favorites.length; i++) {
-                    if (favorites[i].id == index)
+                for (var i = 0; i < favArr.length; i++) {
+                    if (favArr[i].id == index)
                         return;
                 }
-                favorites.push({id: index});
+                favArr.push({id: index});
+//                $localStorage.store('favorites', '{id: '+index+'}');
+                $localStorage.storeObject('favorites', favArr);
             };
             
             favFac.deleteFromFavorites = function (index) {
-                for (var i = 0; i < favorites.length; i++) {
-                    if (favorites[i].id == index) {
-                        favorites.splice(i, 1);
+                for (var i = 0; i < favArr.length; i++) {
+                    if (favArr[i].id == index) {
+                        favArr.splice(i, 1);
+                        $localStorage.storeObject('favorites', favArr);
                     }
                 }
             }
 
             favFac.getFavorites = function () {
-                return favorites;
+                return favArr;
             };
 
-            return favFac;
+//            return favorites;
+              return favFac;
         }])
 
 ;

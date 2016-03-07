@@ -11,6 +11,9 @@ angular.module('conFusion.controllers', [])
 
   // Form data for the login modal
   $scope.loginData = $localStorage.getObject('userinfo','{}');
+    
+  $scope.favorites = $localStorage.getObject('favorites','{}');
+    
   $reservationData = {};
   $commentData = {};  
 
@@ -68,24 +71,16 @@ angular.module('conFusion.controllers', [])
 
 })
 
-.controller('MenuController', ['$scope', 'menuFactory','favoriteFactory', 'baseURL', '$ionicListDelegate', 
-   function($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate) {
+.controller('MenuController', ['$scope', 'dishes','favoriteFactory', 'baseURL', '$ionicListDelegate', '$localStorage',
+   function($scope, dishes, favoriteFactory, baseURL, $ionicListDelegate, $localStorage ) {
     $scope.baseURL = baseURL;
     $scope.tab = 1;
     $scope.filtText = '';
     $scope.showDetails = false;
-    $scope.showMenu = false;
+    $scope.favorites = favoriteFactory.getFavorites();
+    
     $scope.message = "Loading ...";
-
-    menuFactory.query(
-        function(response) {
-            $scope.dishes = response;
-            $scope.showMenu = true;
-        },
-        function(response) {
-            $scope.message = "Error: "+response.status + " " + response.statusText;
-        });
-
+    $scope.dishes = dishes;
 
     $scope.select = function(setTab) {
         $scope.tab = setTab;
@@ -115,6 +110,7 @@ angular.module('conFusion.controllers', [])
     $scope.addFavorite = function (index) {
         console.log("index is " + index);
         favoriteFactory.addToFavorites(index);
+        
         $ionicListDelegate.closeOptionButtons();
     }
 
@@ -251,44 +247,34 @@ angular.module('conFusion.controllers', [])
         }])
 
 
-        .controller('IndexController', ['$scope', 'menuFactory', 'corporateFactory', 'promotionFactory', 'baseURL', function($scope, menuFactory, corporateFactory, promotionFactory, baseURL) {
+        .controller('IndexController', ['$scope', 'dish', 'leader', 'promotion', 'baseURL', function($scope, dish, leader, promotion , baseURL) {
                         
                         $scope.baseURL =baseURL;                
-                        $scope.leader = corporateFactory.get({id:3});
+                        $scope.leader = leader;
                         $scope.showDish = false;
                         $scope.message="Loading ...";
-                        $scope.dish = menuFactory.get({id:0})
-                        .$promise.then(
-                            function(response){
-                                $scope.dish = response;
-                                $scope.showDish = true;
-                            },
-                            function(response) {
-                                $scope.message = "Error: "+response.status + " " + response.statusText;
-                            }
-                        );
-                        $scope.promotion = promotionFactory.get({id:0});
+                        $scope.dish = dish;
+                        $scope.promotion = promotion;
             
                     }])
 
-        .controller('AboutController', ['$scope', 'corporateFactory', 'baseURL',
-        function($scope, corporateFactory, baseURL) {
+        .controller('AboutController', ['$scope', 'leaders', 'baseURL',
+        function($scope, leaders, baseURL) {
                     $scope.baseURL = baseURL;
-                    $scope.leaders = corporateFactory.query();
+                    $scope.leaders = leaders;
                     console.log($scope.leaders);
             
                     }])
 
-        .controller('FavoritesController', ['$scope', 'dishes', 'favorites', 'favoriteFactory', 'baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout',
+        .controller('FavoritesController', ['$scope', 'dishes', 'favorites', 'favoriteFactory','baseURL', '$ionicListDelegate', '$ionicPopup', '$ionicLoading', '$timeout',
                                             function ($scope, dishes, favorites, favoriteFactory, baseURL, $ionicListDelegate, $ionicPopup, $ionicLoading, $timeout) {
 
             $scope.baseURL = baseURL;
             $scope.shouldShowDelete = false;
                                                 
             $scope.favorites = favorites;
+
             $scope.dishes = dishes;
-                                         
-            console.log($scope.dishes, $scope.favorites);
 
             $scope.toggleDelete = function () {
                 $scope.shouldShowDelete = !$scope.shouldShowDelete;
@@ -318,10 +304,14 @@ angular.module('conFusion.controllers', [])
         .filter('favoriteFilter', function () {
             return function (dishes, favorites) {
                 var out = [];
+                console.log('Favorites total: '+favorites.length);
                 for (var i = 0; i < favorites.length; i++) {
+                    console.log(favorites[i]);
                     for (var j = 0; j < dishes.length; j++) {
-                        if (dishes[j].id === favorites[i].id)
+                        if (dishes[j].id === favorites[i].id){
                             out.push(dishes[j]);
+                            console.log(dishes[j]);
+                        }
                     }
                 }
                 return out;
